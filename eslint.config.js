@@ -4,7 +4,7 @@ import { defineConfig, globalIgnores } from 'eslint/config'
 import preferArrow from 'eslint-plugin-prefer-arrow-functions'
 
 export default defineConfig([
-  globalIgnores(['node_modules']),
+  globalIgnores(['node_modules', 'eslint.config.js']),
   {
     files: ['**/*.js'],
     extends: [js.configs.recommended],
@@ -31,6 +31,23 @@ export default defineConfig([
       'no-var': 'error',
       'object-shorthand': 'error',
       'no-console': 'warn',
+      'require-await': 'error',
+      'prefer-template': 'error',
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'ClassDeclaration',
+          message: 'Classes are not allowed. Use plain functions and objects instead.',
+        },
+        {
+          selector: 'ClassExpression',
+          message: 'Classes are not allowed. Use plain functions and objects instead.',
+        },
+        {
+          selector: 'ExportDefaultDeclaration',
+          message: 'Use named exports instead of export default.',
+        },
+      ],
     },
   },
 ])

@@ -1,10 +1,10 @@
 import { Sequelize } from 'sequelize'
 import { createRequire } from 'node:module'
-import userModel from './user.js'
-import postModel from './post.js'
-import postImageModel from './postImage.js'
-import commentModel from './comment.js'
-import tagModel from './tag.js'
+import { userModel } from './user.js'
+import { postModel } from './post.js'
+import { postImageModel } from './postImage.js'
+import { commentModel } from './comment.js'
+import { tagModel } from './tag.js'
 
 const require = createRequire(import.meta.url)
 const config = require('../config/config.json')
@@ -29,4 +29,3 @@ const db = { User, Post, PostImage, Comment, Tag, sequelize, Sequelize }
 })
 
 export { User, Post, PostImage, Comment, Tag, sequelize }
-export default db

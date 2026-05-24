@@ -1,4 +1,4 @@
-const postModel = (sequelize, DataTypes) => {
+export const postModel = (sequelize, DataTypes) => {
   const Post = sequelize.define(
     'Post',
     {
@@ -23,5 +23,3 @@ const postModel = (sequelize, DataTypes) => {
 
   return Post
 }
-
-export default postModel

@@ -1,5 +1,5 @@
 import express from 'express'
-import exampleRoute from './routes/example.route.js'
+import { router as exampleRoute } from './routes/example.route.js'
 
 const app = express()
 
@@ -16,4 +16,4 @@ app.use((err, req, res) => {
   res.status(err.status ?? 500).json({ error: err.message })
 })
 
-export default app
+export { app }

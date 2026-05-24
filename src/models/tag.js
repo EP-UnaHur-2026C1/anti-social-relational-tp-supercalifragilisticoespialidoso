@@ -1,4 +1,4 @@
-const tagModel = (sequelize, DataTypes) => {
+export const tagModel = (sequelize, DataTypes) => {
   const Tag = sequelize.define(
     'Tag',
     {
@@ -17,5 +17,3 @@ const tagModel = (sequelize, DataTypes) => {
 
   return Tag
 }
-
-export default tagModel

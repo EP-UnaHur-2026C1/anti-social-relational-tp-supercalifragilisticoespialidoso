@@ -11,4 +11,4 @@ router.post('/examples', validate(validateExample), exampleController.create)
 router.put('/examples/:id', exampleController.update)
 router.delete('/examples/:id', exampleController.remove)
 
-export default router
+export { router }
