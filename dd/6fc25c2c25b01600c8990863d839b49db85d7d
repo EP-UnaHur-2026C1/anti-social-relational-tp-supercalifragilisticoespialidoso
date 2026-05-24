@@ -1,0 +1,74 @@
+src/routes/example.route.js
+  s_02df355a5d2d26::t_d7f4e074ae341d 14
+src/repositories/posts.repository.js
+  s_fd03e537f899be::t_0ef2c57c85a471 4,12,14,30,37,39,41,43,45,47
+  s_02df355a5d2d26::t_97d108138f06f8 32
+  h_a5ee0ed7d5d05d 1-3,5-11,13,15-29,31,33-36,38,40,42,44,46
+src/models/index.js
+  s_02df355a5d2d26::t_682b3b9dede3e9 3-7
+src/models/post.js
+  s_02df355a5d2d26::t_67c00531339fd9 1
+src/index.js
+  s_02df355a5d2d26::t_0eb7e4d2cf3903 2-3,7-8
+src/models/user.js
+  s_02df355a5d2d26::t_b766bfeaf40953 1
+src/models/postImage.js
+  s_02df355a5d2d26::t_945ccbebc683b1 1
+package.json
+  s_02df355a5d2d26::t_8298191dc4de53 8
+  s_02df355a5d2d26::t_2f481d8c78fb53 41-42
+src/config/config.json
+  s_02df355a5d2d26::t_811f13fc2857d2 3,8
+src/models/comment.js
+  s_02df355a5d2d26::t_2ba84a4b3b298d 1
+src/repositories/tags.repository.js
+  s_02df355a5d2d26::t_ff250a3aaf4263 20
+eslint.config.js
+  s_02df355a5d2d26::t_11ab9a3eadcdd2 35-45,50
+  s_02df355a5d2d26::t_dc5cd9f78c85f9 34
+  s_02df355a5d2d26::t_19786489097380 47-48
+  s_02df355a5d2d26::t_413d15350b667f 46,49
+  h_a5ee0ed7d5d05d 7
+src/repositories/comments.repository.js
+  h_a5ee0ed7d5d05d 1-2,4,6-11,13-19,21,23-26
+  s_02df355a5d2d26::t_209168f257631c 22
+  s_fd03e537f899be::t_79a1e400bd80df 3,5,12,20,27
+src/repositories/users.repository.js
+  h_a5ee0ed7d5d05d 1-2,4,6,8-15,17-20,22-25,27,29-32
+  s_02df355a5d2d26::t_887f7b66f17031 28
+  s_fd03e537f899be::t_6b7567c218bbbe 3,5,7,16,21,26,33-37
+src/models/tag.js
+  s_02df355a5d2d26::t_7771fc720ce1bc 1
+src/app.js
+  s_02df355a5d2d26::t_90b6e6a9e4833b 2
+  s_02df355a5d2d26::t_6f3775d07deca1 19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.0",
+  "base_commit_sha": "dd6fc25c2c25b01600c8990863d839b49db85d7d",
+  "prompts": {},
+  "humans": {
+    "h_a5ee0ed7d5d05d": {
+      "author": "thomasbarenghi <thomasbarenghi@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_02df355a5d2d26": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4775eee8-9f9b-4fd2-be60-61aa95d17c64",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "thomasbarenghi <thomasbarenghi@gmail.com>"
+    },
+    "s_fd03e537f899be": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6b9a8bf9-ba35-4f6b-8ff1-92f492aacdfb",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "thomasbarenghi <thomasbarenghi@gmail.com>"
+    }
+  }
+}
