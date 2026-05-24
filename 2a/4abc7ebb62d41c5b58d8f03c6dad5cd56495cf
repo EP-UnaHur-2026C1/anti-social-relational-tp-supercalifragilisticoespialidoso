@@ -1,0 +1,32 @@
+.gitIgnore
+  h_a5ee0ed7d5d05d 2-4
+eslint.config.js
+  s_fd03e537f899be::t_dc0d3b3276fe65 1-36
+.husky/pre-commit
+  s_fd03e537f899be::t_e6ae04341c71f3 1
+package.json
+  s_fd03e537f899be::t_25cb0200b31c3a 5-6,9-23,28-35
+.prettierrc
+  s_fd03e537f899be::t_b226bb12def320 1-8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.0",
+  "base_commit_sha": "2a4abc7ebb62d41c5b58d8f03c6dad5cd56495cf",
+  "prompts": {},
+  "humans": {
+    "h_a5ee0ed7d5d05d": {
+      "author": "thomasbarenghi <thomasbarenghi@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_fd03e537f899be": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6b9a8bf9-ba35-4f6b-8ff1-92f492aacdfb",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "thomasbarenghi <thomasbarenghi@gmail.com>"
+    }
+  }
+}
