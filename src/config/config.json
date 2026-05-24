@@ -1,0 +1,26 @@
+{
+  "development": {
+    "username": "root",
+    "password": null,
+    "database": "anti_social_db",
+    "host": "data/data.sqlite",
+    "dialect": "sqlite",
+    "logging": false
+  },
+  "test": {
+    "username": null,
+    "password": null,
+    "database": "anti_social_test",
+    "host": "data/test.sqlite",
+    "dialect": "sqlite",
+    "logging": false
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "anti_social_prod",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "logging": false
+  }
+}
