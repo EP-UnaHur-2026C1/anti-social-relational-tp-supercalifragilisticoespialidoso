@@ -15,7 +15,7 @@ app.use('/api', postsRoute)
 app.use('/api', commentsRoute)
 app.use('/api', tagsRoute)
 
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   if (err.name === 'SequelizeUniqueConstraintError') {
     return res
       .status(409)
@@ -23,5 +23,14 @@ app.use((err, req, res, next) => {
   }
   res.status(err.status ?? 500).json({ error: err.message })
 })
+
+// app.use((err, req, res, next) => {
+//   if (err.name === 'SequelizeUniqueConstraintError') {
+//     const fields = Array.isArray(err.fields) ? err.fields : Object.keys(err.fields)
+//
+//     return res.status(409).json({ error: 'El valor ya existe', campo: fields.join(', ') })
+//   }
+//   res.status(err.status ?? 500).json({ error: err.message })
+// })
 
 export { app }
