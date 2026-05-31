@@ -1,5 +1,5 @@
-import * as postsRepo from '../repositories/posts.repository.js'
-import * as tagsRepo from '../repositories/tags.repository.js'
+import * as postsService from '../services/posts.service.js'
+import * as tagsService from '../services/tags.service.js'
 
 const getCommentCutoff = () => {
   const months = Number(process.env.COMMENT_MONTHS ?? 6)
@@ -10,7 +10,7 @@ const getCommentCutoff = () => {
 
 export const getAll = async (req, res, next) => {
   try {
-    const items = await postsRepo.findAll()
+    const items = await postsService.getAll()
     res.json(items)
   } catch (err) {
     next(err)
@@ -20,7 +20,7 @@ export const getAll = async (req, res, next) => {
 export const getById = async (req, res, next) => {
   try {
     const cutoff = getCommentCutoff()
-    const item = await postsRepo.findByIdWithRelations(req.params.id, cutoff)
+    const item = await postsService.getById(req.params.id, cutoff)
     if (!item) return res.status(404).json({ error: 'No encontrado' })
     res.json(item)
   } catch (err) {
@@ -30,7 +30,7 @@ export const getById = async (req, res, next) => {
 
 export const create = async (req, res, next) => {
   try {
-    const item = await postsRepo.create(req.body)
+    const item = await postsService.create(req.body)
     res.status(201).json(item)
   } catch (err) {
     next(err)
@@ -39,9 +39,9 @@ export const create = async (req, res, next) => {
 
 export const update = async (req, res, next) => {
   try {
-    const post = await postsRepo.findById(req.params.id)
+    const post = await postsService.getById(req.params.id)
     if (!post) return res.status(404).json({ error: 'No encontrado' })
-    const updated = await postsRepo.update(post, req.body)
+    const updated = await postsService.update(post, req.body)
     res.json(updated)
   } catch (err) {
     next(err)
@@ -50,9 +50,9 @@ export const update = async (req, res, next) => {
 
 export const remove = async (req, res, next) => {
   try {
-    const post = await postsRepo.findById(req.params.id)
+    const post = await postsService.getById(req.params.id)
     if (!post) return res.status(404).json({ error: 'No encontrado' })
-    await postsRepo.remove(post)
+    await postsService.remove(post)
     res.status(200).json(post)
   } catch (err) {
     next(err)
@@ -65,9 +65,9 @@ export const addImage = async (req, res, next) => {
   try {
     const { url } = req.body
     const postId = req.params.id
-    const post = await postsRepo.findById(postId)
+    const post = await postsService.getById(postId)
     if (!post) return res.status(404).json({ error: 'Post no encontrado' })
-    const image = await postsRepo.addImage(postId, url)
+    const image = await postsService.addImage(postId, url)
     res.status(201).json(image)
   } catch (err) {
     next(err)
@@ -78,9 +78,9 @@ export const removeImage = async (req, res, next) => {
   try {
     const { imageId } = req.params
     const postId = req.params.id
-    const image = await postsRepo.findImage(imageId, postId)
+    const image = await postsService.findImage(imageId, postId)
     if (!image) return res.status(404).json({ error: 'Imagen no encontrada' })
-    await postsRepo.removeImage(image)
+    await postsService.removeImage(image)
     res.status(200).json(image)
   } catch (err) {
     next(err)
@@ -91,11 +91,13 @@ export const removeImage = async (req, res, next) => {
 
 export const addTag = async (req, res, next) => {
   try {
-    const post = await postsRepo.findById(req.params.id)
+    const post = await postsService.getById(req.params.id)
     if (!post) return res.status(404).json({ error: 'Post no encontrado' })
-    const tag = await tagsRepo.findByIdSimple(req.body.tagId)
+    const { tagId } = req.body
+    if (!tagId) return res.status(400).json({ error: 'tagId es requerido' })
+    const tag = await tagsService.getByIdSimple(tagId)
     if (!tag) return res.status(404).json({ error: 'Tag no encontrado' })
-    await postsRepo.addTag(post, tag)
+    await postsService.addTag(post, tag)
     res.status(204).send()
   } catch (err) {
     next(err)
@@ -104,11 +106,11 @@ export const addTag = async (req, res, next) => {
 
 export const removeTag = async (req, res, next) => {
   try {
-    const post = await postsRepo.findById(req.params.id)
+    const post = await postsService.getById(req.params.id)
     if (!post) return res.status(404).json({ error: 'Post no encontrado' })
-    const tag = await tagsRepo.findByIdSimple(req.params.tagId)
+    const tag = await tagsService.getByIdSimple(req.params.tagId)
     if (!tag) return res.status(404).json({ error: 'Tag no encontrado' })
-    await postsRepo.removeTag(post, tag)
+    await postsService.removeTag(post, tag)
     res.status(200).json(tag)
   } catch (err) {
     next(err)
