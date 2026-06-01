@@ -1,8 +1,7 @@
-import * as commentsRepo from '../repositories/comments.repository.js'
-
+import * as commentsService from '../services/comments.service.js'
 export const getAll = async (req, res, next) => {
   try {
-    const items = await commentsRepo.findAll()
+    const items = await commentsService.getAll()
     res.json(items)
   } catch (err) {
     next(err)
@@ -11,7 +10,7 @@ export const getAll = async (req, res, next) => {
 
 export const getById = async (req, res, next) => {
   try {
-    const item = await commentsRepo.findById(req.params.id)
+    const item = await commentsService.getById(req.params.id)
     if (!item) return res.status(404).json({ error: 'No encontrado' })
     res.json(item)
   } catch (err) {
@@ -21,7 +20,7 @@ export const getById = async (req, res, next) => {
 
 export const create = async (req, res, next) => {
   try {
-    const item = await commentsRepo.create(req.body)
+    const item = await commentsService.create(req.body)
     res.status(201).json(item)
   } catch (err) {
     next(err)
@@ -30,9 +29,9 @@ export const create = async (req, res, next) => {
 
 export const update = async (req, res, next) => {
   try {
-    const comment = await commentsRepo.findById(req.params.id)
+    const comment = await commentsService.getById(req.params.id)
     if (!comment) return res.status(404).json({ error: 'No encontrado' })
-    const updated = await commentsRepo.update(comment, req.body)
+    const updated = await commentsService.update(comment, req.body)
     res.json(updated)
   } catch (err) {
     next(err)
@@ -41,9 +40,9 @@ export const update = async (req, res, next) => {
 
 export const remove = async (req, res, next) => {
   try {
-    const comment = await commentsRepo.findById(req.params.id)
+    const comment = await commentsService.getById(req.params.id)
     if (!comment) return res.status(404).json({ error: 'No encontrado' })
-    await commentsRepo.remove(comment)
+    await commentsService.remove(comment)
     res.status(200).json(comment)
   } catch (err) {
     next(err)

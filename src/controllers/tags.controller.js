@@ -1,8 +1,7 @@
-import * as tagsRepo from '../repositories/tags.repository.js'
-
+import * as tagsService from '../services/tags.service.js'
 export const getAll = async (req, res, next) => {
   try {
-    const items = await tagsRepo.findAll()
+    const items = await tagsService.getAll()
     res.json(items)
   } catch (err) {
     next(err)
@@ -11,7 +10,7 @@ export const getAll = async (req, res, next) => {
 
 export const getById = async (req, res, next) => {
   try {
-    const item = await tagsRepo.findById(req.params.id)
+    const item = await tagsService.getById(req.params.id)
     if (!item) return res.status(404).json({ error: 'No encontrado' })
     res.json(item)
   } catch (err) {
@@ -21,7 +20,7 @@ export const getById = async (req, res, next) => {
 
 export const create = async (req, res, next) => {
   try {
-    const item = await tagsRepo.create(req.body)
+    const item = await tagsService.create(req.body)
     res.status(201).json(item)
   } catch (err) {
     next(err)
@@ -30,9 +29,9 @@ export const create = async (req, res, next) => {
 
 export const update = async (req, res, next) => {
   try {
-    const tag = await tagsRepo.findByIdSimple(req.params.id)
+    const tag = await tagsService.getByIdSimple(req.params.id)
     if (!tag) return res.status(404).json({ error: 'No encontrado' })
-    const updated = await tagsRepo.update(tag, req.body)
+    const updated = await tagsService.update(tag, req.body)
     res.json(updated)
   } catch (err) {
     next(err)
@@ -41,9 +40,9 @@ export const update = async (req, res, next) => {
 
 export const remove = async (req, res, next) => {
   try {
-    const tag = await tagsRepo.findByIdSimple(req.params.id)
+    const tag = await tagsService.getByIdSimple(req.params.id)
     if (!tag) return res.status(404).json({ error: 'No encontrado' })
-    await tagsRepo.remove(tag)
+    await tagsService.remove(tag)
     res.status(200).json(tag)
   } catch (err) {
     next(err)
