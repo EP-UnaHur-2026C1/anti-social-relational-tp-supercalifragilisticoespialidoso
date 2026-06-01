@@ -13,6 +13,9 @@ router.post('/users', schemaValidator(userSchema), usersController.create)
 router.put('/users/:id', validateUserId, schemaValidator(userSchema), usersController.update)
 router.delete('/users/:id', validateUserId, usersController.remove)
 
+router.get('/users/:id/followers', validateUserId, usersController.getFollowers)
+router.get('/users/:id/following', validateUserId, usersController.getFollowing)
+
 router.post('/users/:followerId/follow/:followedId', validateFollow, usersController.follow)
 router.delete('/users/:followerId/unfollow/:followedId', validateFollow, usersController.unfollow)
 

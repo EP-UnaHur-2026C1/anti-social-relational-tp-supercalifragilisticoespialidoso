@@ -1,4 +1,5 @@
 import * as usersService from '../services/users.service.js'
+
 export const getAll = async (req, res, next) => {
   try {
     const items = await usersService.getAll()
@@ -8,15 +9,11 @@ export const getAll = async (req, res, next) => {
   }
 }
 
-export const getById = async (req, res, next) => {
-  try {
-    const item = await usersService.getById(req.params.id)
-    if (!item) return res.status(404).json({ error: 'No encontrado' })
-    res.json(item)
-  } catch (err) {
-    next(err)
-  }
-}
+export const getById = (req, res) => res.json(req.user)
+
+export const getFollowers = (req, res) => res.json(req.user.followers)
+
+export const getFollowing = (req, res) => res.json(req.user.following)
 
 export const create = async (req, res, next) => {
   try {
@@ -29,9 +26,7 @@ export const create = async (req, res, next) => {
 
 export const update = async (req, res, next) => {
   try {
-    const user = await usersService.getById(req.params.id)
-    if (!user) return res.status(404).json({ error: 'No encontrado' })
-    const updated = await usersService.update(user, req.body)
+    const updated = await usersService.update(req.user, req.body)
     res.json(updated)
   } catch (err) {
     next(err)
@@ -40,10 +35,8 @@ export const update = async (req, res, next) => {
 
 export const remove = async (req, res, next) => {
   try {
-    const user = await usersService.getById(req.params.id)
-    if (!user) return res.status(404).json({ error: 'No encontrado' })
-    await usersService.remove(user)
-    res.status(200).json(user)
+    await usersService.remove(req.user)
+    res.status(204).send()
   } catch (err) {
     next(err)
   }
@@ -51,11 +44,8 @@ export const remove = async (req, res, next) => {
 
 export const follow = async (req, res, next) => {
   try {
-    const follower = await usersService.getById(req.params.followerId)
-    const followed = await usersService.getById(req.params.followedId)
-    if (!follower || !followed) return res.status(404).json({ error: 'Usuario no encontrado' })
-    await usersService.follow(follower, followed)
-    res.status(204).send()
+    await usersService.follow(req.follower, req.followed)
+    res.status(201).json({ message: `${req.follower.nickName} sigue a ${req.followed.nickName}` })
   } catch (err) {
     next(err)
   }
@@ -63,11 +53,10 @@ export const follow = async (req, res, next) => {
 
 export const unfollow = async (req, res, next) => {
   try {
-    const follower = await usersService.getById(req.params.followerId)
-    const followed = await usersService.getById(req.params.followedId)
-    if (!follower || !followed) return res.status(404).json({ error: 'Usuario no encontrado' })
-    await usersService.unfollow(follower, followed)
-    res.status(204).send()
+    await usersService.unfollow(req.follower, req.followed)
+    res
+      .status(200)
+      .json({ message: `${req.follower.nickName} dejó de seguir a ${req.followed.nickName}` })
   } catch (err) {
     next(err)
   }

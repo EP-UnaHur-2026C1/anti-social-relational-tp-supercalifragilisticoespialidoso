@@ -21,7 +21,6 @@ export const getById = async (req, res, next) => {
   try {
     const cutoff = getCommentCutoff()
     const item = await postsService.getById(req.params.id, cutoff)
-    if (!item) return res.status(404).json({ error: 'No encontrado' })
     res.json(item)
   } catch (err) {
     next(err)
@@ -39,9 +38,7 @@ export const create = async (req, res, next) => {
 
 export const update = async (req, res, next) => {
   try {
-    const post = await postsService.getById(req.params.id)
-    if (!post) return res.status(404).json({ error: 'No encontrado' })
-    const updated = await postsService.update(post, req.body)
+    const updated = await postsService.update(req.post, req.body)
     res.json(updated)
   } catch (err) {
     next(err)
@@ -50,10 +47,8 @@ export const update = async (req, res, next) => {
 
 export const remove = async (req, res, next) => {
   try {
-    const post = await postsService.getById(req.params.id)
-    if (!post) return res.status(404).json({ error: 'No encontrado' })
-    await postsService.remove(post)
-    res.status(200).json(post)
+    await postsService.remove(req.post)
+    res.status(204).send()
   } catch (err) {
     next(err)
   }
@@ -63,11 +58,7 @@ export const remove = async (req, res, next) => {
 
 export const addImage = async (req, res, next) => {
   try {
-    const { url } = req.body
-    const postId = req.params.id
-    const post = await postsService.getById(postId)
-    if (!post) return res.status(404).json({ error: 'Post no encontrado' })
-    const image = await postsService.addImage(postId, url)
+    const image = await postsService.addImage(req.params.id, req.body.url)
     res.status(201).json(image)
   } catch (err) {
     next(err)
@@ -76,12 +67,10 @@ export const addImage = async (req, res, next) => {
 
 export const removeImage = async (req, res, next) => {
   try {
-    const { imageId } = req.params
-    const postId = req.params.id
-    const image = await postsService.findImage(imageId, postId)
+    const image = await postsService.findImage(req.params.imageId, req.params.id)
     if (!image) return res.status(404).json({ error: 'Imagen no encontrada' })
     await postsService.removeImage(image)
-    res.status(200).json(image)
+    res.status(204).send()
   } catch (err) {
     next(err)
   }
@@ -91,14 +80,10 @@ export const removeImage = async (req, res, next) => {
 
 export const addTag = async (req, res, next) => {
   try {
-    const post = await postsService.getById(req.params.id)
-    if (!post) return res.status(404).json({ error: 'Post no encontrado' })
-    const { tagId } = req.body
-    if (!tagId) return res.status(400).json({ error: 'tagId es requerido' })
-    const tag = await tagsService.getByIdSimple(tagId)
+    const tag = await tagsService.getByIdSimple(req.params.tagId)
     if (!tag) return res.status(404).json({ error: 'Tag no encontrado' })
-    await postsService.addTag(post, tag)
-    res.status(204).send()
+    await postsService.addTag(req.post, tag)
+    res.status(201).send()
   } catch (err) {
     next(err)
   }
@@ -106,11 +91,9 @@ export const addTag = async (req, res, next) => {
 
 export const removeTag = async (req, res, next) => {
   try {
-    const post = await postsService.getById(req.params.id)
-    if (!post) return res.status(404).json({ error: 'Post no encontrado' })
     const tag = await tagsService.getByIdSimple(req.params.tagId)
     if (!tag) return res.status(404).json({ error: 'Tag no encontrado' })
-    await postsService.removeTag(post, tag)
+    await postsService.removeTag(req.post, tag)
     res.status(200).json(tag)
   } catch (err) {
     next(err)

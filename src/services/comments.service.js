@@ -6,6 +6,6 @@ export const getById = (id) => commentsRepository.findById(id)
 
 export const create = (data) => commentsRepository.create(data)
 
-export const update = (id, data) => commentsRepository.update(id, data)
+export const update = (comment, data) => commentsRepository.update(comment, data)
 
-export const remove = (id) => commentsRepository.remove(id)
+export const remove = (comment) => commentsRepository.remove(comment)

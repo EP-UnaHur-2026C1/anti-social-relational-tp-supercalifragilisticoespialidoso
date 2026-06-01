@@ -7,138 +7,6 @@
   },
   "item": [
     {
-      "name": "Examples",
-      "item": [
-        {
-          "name": "Crear example",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
-                  "const body = pm.response.json();",
-                  "pm.collectionVariables.set('exampleId', body.id);"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Example {{$timestamp}}\",\n  \"description\": \"Registro de prueba\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/examples",
-              "host": ["{{baseUrl}}"],
-              "path": ["examples"]
-            }
-          }
-        },
-        {
-          "name": "Listar examples",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/examples",
-              "host": ["{{baseUrl}}"],
-              "path": ["examples"]
-            }
-          }
-        },
-        {
-          "name": "Obtener example por id",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/examples/{{exampleId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["examples", "{{exampleId}}"]
-            }
-          }
-        },
-        {
-          "name": "Actualizar example",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Example actualizado {{$timestamp}}\",\n  \"description\": \"Registro actualizado\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/examples/{{exampleId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["examples", "{{exampleId}}"]
-            }
-          }
-        },
-        {
-          "name": "Eliminar example",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": ["pm.test('Status 204', () => pm.response.to.have.status(204));"],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/examples/{{exampleId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["examples", "{{exampleId}}"]
-            }
-          }
-        }
-      ]
-    },
-    {
       "name": "Users",
       "item": [
         {
@@ -158,12 +26,7 @@
           ],
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"nickName\": \"anti_user_a_{{$timestamp}}_{{$randomInt}}\",\n  \"email\": \"anti_user_a_{{$timestamp}}_{{$randomInt}}@example.com\",\n  \"name\": \"Usuario A\"\n}"
@@ -192,12 +55,7 @@
           ],
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"nickName\": \"anti_user_b_{{$timestamp}}_{{$randomInt}}\",\n  \"email\": \"anti_user_b_{{$timestamp}}_{{$randomInt}}@example.com\",\n  \"name\": \"Usuario B\"\n}"
@@ -236,7 +94,15 @@
             {
               "listen": "test",
               "script": {
-                "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"],
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Tiene posts, followers y following', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('posts');",
+                  "  pm.expect(body).to.have.property('followers');",
+                  "  pm.expect(body).to.have.property('following');",
+                  "});"
+                ],
                 "type": "text/javascript"
               }
             }
@@ -264,15 +130,10 @@
           ],
           "request": {
             "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nickName\": \"anti_user_a_updated_{{$timestamp}}_{{$randomInt}}\",\n  \"email\": \"anti_user_a_updated_{{$timestamp}}_{{$randomInt}}@example.com\",\n  \"name\": \"Usuario A Actualizado\"\n}"
+              "raw": "{\n  \"nickName\": \"anti_user_a_upd_{{$timestamp}}_{{$randomInt}}\",\n  \"email\": \"anti_user_a_upd_{{$timestamp}}_{{$randomInt}}@example.com\",\n  \"name\": \"Usuario A Actualizado\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/users/{{user1Id}}",
@@ -282,12 +143,17 @@
           }
         },
         {
-          "name": "Seguir usuario",
+          "name": "Seguir usuario (A sigue a B)",
           "event": [
             {
               "listen": "test",
               "script": {
-                "exec": ["pm.test('Status 204', () => pm.response.to.have.status(204));"],
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "pm.test('Tiene mensaje', () => {",
+                  "  pm.expect(pm.response.json()).to.have.property('message');",
+                  "});"
+                ],
                 "type": "text/javascript"
               }
             }
@@ -303,12 +169,54 @@
           }
         },
         {
+          "name": "Obtener followers de usuario B",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/{{user2Id}}/followers",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "{{user2Id}}", "followers"]
+            }
+          }
+        },
+        {
+          "name": "Obtener following de usuario A",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/{{user1Id}}/following",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "{{user1Id}}", "following"]
+            }
+          }
+        },
+        {
           "name": "Dejar de seguir usuario",
           "event": [
             {
               "listen": "test",
               "script": {
-                "exec": ["pm.test('Status 204', () => pm.response.to.have.status(204));"],
+                "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"],
                 "type": "text/javascript"
               }
             }
@@ -345,12 +253,7 @@
           ],
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"tag-{{$timestamp}}-{{$randomInt}}\"\n}"
@@ -389,7 +292,10 @@
             {
               "listen": "test",
               "script": {
-                "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"],
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Tiene posts', () => pm.expect(pm.response.json()).to.have.property('posts'));"
+                ],
                 "type": "text/javascript"
               }
             }
@@ -417,12 +323,7 @@
           ],
           "request": {
             "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"tag-updated-{{$timestamp}}-{{$randomInt}}\"\n}"
@@ -456,12 +357,7 @@
           ],
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"description\": \"Post de prueba {{$timestamp}}\",\n  \"userId\": {{user1Id}}\n}"
@@ -500,7 +396,15 @@
             {
               "listen": "test",
               "script": {
-                "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"],
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Tiene images, tags y comments', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('images');",
+                  "  pm.expect(body).to.have.property('tags');",
+                  "  pm.expect(body).to.have.property('comments');",
+                  "});"
+                ],
                 "type": "text/javascript"
               }
             }
@@ -528,12 +432,7 @@
           ],
           "request": {
             "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"description\": \"Post actualizado {{$timestamp}}\"\n}"
@@ -562,12 +461,7 @@
           ],
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"url\": \"https://example.com/images/anti-social-{{$timestamp}}.jpg\"\n}"
@@ -585,27 +479,18 @@
             {
               "listen": "test",
               "script": {
-                "exec": ["pm.test('Status 204', () => pm.response.to.have.status(204));"],
+                "exec": ["pm.test('Status 201', () => pm.response.to.have.status(201));"],
                 "type": "text/javascript"
               }
             }
           ],
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"tagId\": {{tagId}}\n}"
-            },
+            "header": [],
             "url": {
-              "raw": "{{baseUrl}}/posts/{{postId}}/tags",
+              "raw": "{{baseUrl}}/posts/{{postId}}/tags/{{tagId}}",
               "host": ["{{baseUrl}}"],
-              "path": ["posts", "{{postId}}", "tags"]
+              "path": ["posts", "{{postId}}", "tags", "{{tagId}}"]
             }
           }
         },
@@ -636,7 +521,7 @@
             {
               "listen": "test",
               "script": {
-                "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"],
+                "exec": ["pm.test('Status 204', () => pm.response.to.have.status(204));"],
                 "type": "text/javascript"
               }
             }
@@ -673,12 +558,7 @@
           ],
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"text\": \"Comentario de prueba {{$timestamp}}\",\n  \"userId\": {{user2Id}},\n  \"postId\": {{postId}}\n}"
@@ -745,15 +625,10 @@
           ],
           "request": {
             "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"text\": \"Comentario actualizado {{$timestamp}}\",\n  \"isVisible\": true\n}"
+              "raw": "{\n  \"text\": \"Comentario actualizado {{$timestamp}}\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/comments/{{commentId}}",
@@ -773,7 +648,7 @@
             {
               "listen": "test",
               "script": {
-                "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"],
+                "exec": ["pm.test('Status 204', () => pm.response.to.have.status(204));"],
                 "type": "text/javascript"
               }
             }
@@ -794,7 +669,7 @@
             {
               "listen": "test",
               "script": {
-                "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"],
+                "exec": ["pm.test('Status 204', () => pm.response.to.have.status(204));"],
                 "type": "text/javascript"
               }
             }
@@ -815,7 +690,7 @@
             {
               "listen": "test",
               "script": {
-                "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"],
+                "exec": ["pm.test('Status 204', () => pm.response.to.have.status(204));"],
                 "type": "text/javascript"
               }
             }
@@ -836,7 +711,7 @@
             {
               "listen": "test",
               "script": {
-                "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"],
+                "exec": ["pm.test('Status 204', () => pm.response.to.have.status(204));"],
                 "type": "text/javascript"
               }
             }
@@ -857,7 +732,7 @@
             {
               "listen": "test",
               "script": {
-                "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"],
+                "exec": ["pm.test('Status 204', () => pm.response.to.have.status(204));"],
                 "type": "text/javascript"
               }
             }
@@ -878,12 +753,7 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:3000/api",
-      "type": "string"
-    },
-    {
-      "key": "exampleId",
-      "value": "",
+      "value": "http://localhost:3000",
       "type": "string"
     },
     {

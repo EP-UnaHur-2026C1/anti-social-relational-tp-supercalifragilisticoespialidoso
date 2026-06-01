@@ -21,16 +21,11 @@ router.post(
   schemaValidator(postImageSchema),
   postsController.addImage,
 )
-router.delete(
-  '/posts/:id/images/:imageId',
-  validatePostId,
-  schemaValidator(postImageSchema),
-  postsController.removeImage,
-)
+router.delete('/posts/:id/images/:imageId', validatePostId, postsController.removeImage)
 
 // PARA TAGS
 
-router.post('/posts/:id/tags', validatePostId, postsController.addTag)
+router.post('/posts/:id/tags/:tagId', validatePostId, postsController.addTag)
 router.delete('/posts/:id/tags/:tagId', validatePostId, postsController.removeTag)
 
 export { router }

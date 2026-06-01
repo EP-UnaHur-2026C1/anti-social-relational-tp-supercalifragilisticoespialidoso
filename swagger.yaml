@@ -9,9 +9,9 @@ info:
     name: MIT
 
 servers:
-  - url: http://localhost:3000/api
+  - url: http://localhost:3000
     description: Servidor local de desarrollo
-  - url: http://localhost:5000/api
+  - url: http://localhost:5000
     description: Servidor alternativo
 
 tags:
@@ -23,8 +23,6 @@ tags:
     description: Operaciones de gestión de comentarios
   - name: Tags
     description: Operaciones de gestión de etiquetas
-  - name: Examples
-    description: Operaciones de ejemplo
 
 paths:
   /users:
@@ -72,9 +70,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ValidationError'
         '409':
-          description: El valor ya existe (duplicado)
+          description: El nickName o email ya existe
           content:
             application/json:
               schema:
@@ -85,7 +83,7 @@ paths:
       tags:
         - Users
       summary: Obtener un usuario por ID
-      description: Retorna los detalles de un usuario específico
+      description: Retorna los detalles de un usuario, incluyendo sus posts, followers y following
       parameters:
         - name: id
           in: path
@@ -99,7 +97,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserWithRelations'
         '404':
           description: Usuario no encontrado
           content:
@@ -137,7 +135,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ValidationError'
         '404':
           description: Usuario no encontrado
           content:
@@ -167,6 +165,62 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /users/{id}/followers:
+    get:
+      tags:
+        - Users
+      summary: Obtener los seguidores de un usuario
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID del usuario
+      responses:
+        '200':
+          description: Lista de seguidores
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserSummary'
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /users/{id}/following:
+    get:
+      tags:
+        - Users
+      summary: Obtener los usuarios que sigue un usuario
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID del usuario
+      responses:
+        '200':
+          description: Lista de usuarios seguidos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserSummary'
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /users/{followerId}/follow/{followedId}:
     post:
       tags:
@@ -187,7 +241,7 @@ paths:
             type: integer
           description: ID del usuario a seguir
       responses:
-        '200':
+        '201':
           description: Usuario seguido exitosamente
           content:
             application/json:
@@ -196,6 +250,13 @@ paths:
                 properties:
                   message:
                     type: string
+                    example: juan sigue a maria
+        '400':
+          description: Un usuario no puede seguirse a sí mismo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         '404':
           description: Usuario no encontrado
           content:
@@ -223,8 +284,16 @@ paths:
             type: integer
           description: ID del usuario a dejar de seguir
       responses:
-        '204':
-          description: Usuario dejado de seguir exitosamente
+        '200':
+          description: Dejó de seguir exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: juan dejó de seguir a maria
         '404':
           description: Usuario no encontrado
           content:
@@ -277,14 +346,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ValidationError'
 
   /posts/{id}:
     get:
       tags:
         - Posts
       summary: Obtener un post por ID
-      description: Retorna los detalles de un post específico
+      description: Retorna los detalles de un post con sus imágenes, tags y comentarios (filtrados por antigüedad)
       parameters:
         - name: id
           in: path
@@ -298,7 +367,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Post'
+                $ref: '#/components/schemas/PostWithRelations'
         '404':
           description: Post no encontrado
           content:
@@ -310,7 +379,7 @@ paths:
       tags:
         - Posts
       summary: Actualizar un post
-      description: Actualiza los datos de un post existente
+      description: Actualiza la descripción de un post existente
       parameters:
         - name: id
           in: path
@@ -336,7 +405,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ValidationError'
         '404':
           description: Post no encontrado
           content:
@@ -371,7 +440,7 @@ paths:
       tags:
         - Posts
       summary: Agregar imagen a un post
-      description: Agrega una imagen a un post existente
+      description: Agrega una imagen (URL) a un post existente
       parameters:
         - name: id
           in: path
@@ -384,23 +453,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PostImage'
+              $ref: '#/components/schemas/PostImageCreate'
       responses:
         '201':
           description: Imagen agregada exitosamente
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
+                $ref: '#/components/schemas/PostImage'
         '400':
-          description: Datos de entrada inválidos
+          description: URL inválida
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ValidationError'
         '404':
           description: Post no encontrado
           content:
@@ -437,58 +503,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /posts/{id}/tags:
+  /posts/{id}/tags/{tagId}:
     post:
       tags:
         - Posts
-      summary: Agregar etiqueta a un post
-      description: Agrega una etiqueta a un post existente
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-          description: ID del post
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                tagId:
-                  type: integer
-                  description: ID de la etiqueta
-      responses:
-        '201':
-          description: Etiqueta agregada exitosamente
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-        '400':
-          description: Datos de entrada inválidos
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '404':
-          description: Post no encontrado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
-  /posts/{id}/tags/{tagId}:
-    delete:
-      tags:
-        - Posts
-      summary: Eliminar etiqueta de un post
-      description: Elimina una etiqueta de un post
+      summary: Asociar una etiqueta a un post
+      description: Agrega una etiqueta existente a un post (relación N:M)
       parameters:
         - name: id
           in: path
@@ -503,8 +523,40 @@ paths:
             type: integer
           description: ID de la etiqueta
       responses:
-        '204':
-          description: Etiqueta eliminada exitosamente
+        '201':
+          description: Etiqueta asociada exitosamente
+        '404':
+          description: Post o etiqueta no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+        - Posts
+      summary: Desasociar una etiqueta de un post
+      description: Quita la asociación entre una etiqueta y un post
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID del post
+        - name: tagId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID de la etiqueta
+      responses:
+        '200':
+          description: Etiqueta desasociada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
         '404':
           description: Post o etiqueta no encontrado
           content:
@@ -516,8 +568,8 @@ paths:
     get:
       tags:
         - Comments
-      summary: Obtener todos los comentarios
-      description: Retorna una lista de todos los comentarios del sistema
+      summary: Obtener todos los comentarios visibles
+      description: Retorna una lista de todos los comentarios con isVisible=true
       responses:
         '200':
           description: Lista de comentarios obtenida exitosamente
@@ -538,7 +590,7 @@ paths:
       tags:
         - Comments
       summary: Crear un nuevo comentario
-      description: Crea un nuevo comentario en el sistema
+      description: Crea un nuevo comentario en un post
       requestBody:
         required: true
         content:
@@ -557,14 +609,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ValidationError'
 
   /comments/{id}:
     get:
       tags:
         - Comments
       summary: Obtener un comentario por ID
-      description: Retorna los detalles de un comentario específico
       parameters:
         - name: id
           in: path
@@ -590,7 +641,6 @@ paths:
       tags:
         - Comments
       summary: Actualizar un comentario
-      description: Actualiza los datos de un comentario existente
       parameters:
         - name: id
           in: path
@@ -616,7 +666,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ValidationError'
         '404':
           description: Comentario no encontrado
           content:
@@ -628,7 +678,6 @@ paths:
       tags:
         - Comments
       summary: Eliminar un comentario
-      description: Elimina un comentario del sistema
       parameters:
         - name: id
           in: path
@@ -651,7 +700,6 @@ paths:
       tags:
         - Tags
       summary: Obtener todas las etiquetas
-      description: Retorna una lista de todas las etiquetas del sistema
       responses:
         '200':
           description: Lista de etiquetas obtenida exitosamente
@@ -661,18 +709,11 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Tag'
-        '500':
-          description: Error del servidor
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
 
     post:
       tags:
         - Tags
       summary: Crear una nueva etiqueta
-      description: Crea una nueva etiqueta en el sistema
       requestBody:
         required: true
         content:
@@ -691,14 +732,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ValidationError'
 
   /tags/{id}:
     get:
       tags:
         - Tags
       summary: Obtener una etiqueta por ID
-      description: Retorna los detalles de una etiqueta específica
+      description: Retorna la etiqueta con sus posts asociados
       parameters:
         - name: id
           in: path
@@ -712,7 +753,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Tag'
+                $ref: '#/components/schemas/TagWithPosts'
         '404':
           description: Etiqueta no encontrada
           content:
@@ -724,7 +765,6 @@ paths:
       tags:
         - Tags
       summary: Actualizar una etiqueta
-      description: Actualiza los datos de una etiqueta existente
       parameters:
         - name: id
           in: path
@@ -750,7 +790,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ValidationError'
         '404':
           description: Etiqueta no encontrada
           content:
@@ -762,7 +802,6 @@ paths:
       tags:
         - Tags
       summary: Eliminar una etiqueta
-      description: Elimina una etiqueta del sistema
       parameters:
         - name: id
           in: path
@@ -780,133 +819,57 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /examples:
-    get:
-      tags:
-        - Examples
-      summary: Obtener todos los ejemplos
-      description: Retorna una lista de todos los ejemplos
-      responses:
-        '200':
-          description: Lista de ejemplos obtenida exitosamente
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Example'
-
-    post:
-      tags:
-        - Examples
-      summary: Crear un nuevo ejemplo
-      description: Crea un nuevo ejemplo
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Example'
-      responses:
-        '201':
-          description: Ejemplo creado exitosamente
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Example'
-
-  /examples/{id}:
-    get:
-      tags:
-        - Examples
-      summary: Obtener un ejemplo por ID
-      description: Retorna los detalles de un ejemplo específico
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-          description: ID del ejemplo
-      responses:
-        '200':
-          description: Ejemplo obtenido exitosamente
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Example'
-
-    put:
-      tags:
-        - Examples
-      summary: Actualizar un ejemplo
-      description: Actualiza los datos de un ejemplo existente
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-          description: ID del ejemplo
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Example'
-      responses:
-        '200':
-          description: Ejemplo actualizado exitosamente
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Example'
-
-    delete:
-      tags:
-        - Examples
-      summary: Eliminar un ejemplo
-      description: Elimina un ejemplo
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-          description: ID del ejemplo
-      responses:
-        '204':
-          description: Ejemplo eliminado exitosamente
-
 components:
   schemas:
+    UserSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+        nickName:
+          type: string
+        name:
+          type: string
+
     User:
       type: object
       properties:
         id:
           type: integer
-          description: ID único del usuario
         nickName:
           type: string
-          description: Nombre de usuario (3-50 caracteres)
           example: juan_perez
         email:
           type: string
           format: email
-          description: Correo electrónico único
           example: juan@example.com
         name:
           type: string
-          description: Nombre completo (2-100 caracteres)
           example: Juan Pérez
         createdAt:
           type: string
           format: date-time
-          description: Fecha de creación
         updatedAt:
           type: string
           format: date-time
-          description: Fecha de última actualización
+
+    UserWithRelations:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          properties:
+            posts:
+              type: array
+              items:
+                $ref: '#/components/schemas/Post'
+            followers:
+              type: array
+              items:
+                $ref: '#/components/schemas/UserSummary'
+            following:
+              type: array
+              items:
+                $ref: '#/components/schemas/UserSummary'
 
     UserCreate:
       type: object
@@ -919,18 +882,15 @@ components:
           type: string
           minLength: 3
           maxLength: 50
-          description: Nombre de usuario
           example: juan_perez
         email:
           type: string
           format: email
-          description: Correo electrónico
           example: juan@example.com
         name:
           type: string
           minLength: 2
           maxLength: 100
-          description: Nombre completo
           example: Juan Pérez
 
     Post:
@@ -938,31 +898,34 @@ components:
       properties:
         id:
           type: integer
-          description: ID único del post
         description:
           type: string
-          description: Contenido del post
         userId:
           type: integer
-          description: ID del usuario que creó el post
         createdAt:
           type: string
           format: date-time
-          description: Fecha de creación
         updatedAt:
           type: string
           format: date-time
-          description: Fecha de última actualización
-        images:
-          type: array
-          items:
-            type: object
-          description: Imágenes asociadas al post
-        tags:
-          type: array
-          items:
-            $ref: '#/components/schemas/Tag'
-          description: Etiquetas asociadas al post
+
+    PostWithRelations:
+      allOf:
+        - $ref: '#/components/schemas/Post'
+        - type: object
+          properties:
+            images:
+              type: array
+              items:
+                $ref: '#/components/schemas/PostImage'
+            tags:
+              type: array
+              items:
+                $ref: '#/components/schemas/Tag'
+            comments:
+              type: array
+              items:
+                $ref: '#/components/schemas/Comment'
 
     PostCreate:
       type: object
@@ -973,11 +936,9 @@ components:
         description:
           type: string
           minLength: 1
-          description: Contenido del post
           example: Este es mi primer post
         userId:
           type: integer
-          description: ID del usuario que crea el post
           example: 1
 
     PostUpdate:
@@ -988,16 +949,27 @@ components:
         description:
           type: string
           minLength: 1
-          description: Nuevo contenido del post
           example: Post actualizado
 
     PostImage:
       type: object
       properties:
+        id:
+          type: integer
         url:
           type: string
           format: uri
-          description: URL de la imagen
+        postId:
+          type: integer
+
+    PostImageCreate:
+      type: object
+      required:
+        - url
+      properties:
+        url:
+          type: string
+          format: uri
           example: https://example.com/image.jpg
 
     Comment:
@@ -1005,24 +977,20 @@ components:
       properties:
         id:
           type: integer
-          description: ID único del comentario
         text:
           type: string
-          description: Contenido del comentario
+        isVisible:
+          type: boolean
         postId:
           type: integer
-          description: ID del post comentado
         userId:
           type: integer
-          description: ID del usuario que comentó
         createdAt:
           type: string
           format: date-time
-          description: Fecha de creación
         updatedAt:
           type: string
           format: date-time
-          description: Fecha de última actualización
 
     CommentCreate:
       type: object
@@ -1034,15 +1002,12 @@ components:
         text:
           type: string
           minLength: 1
-          description: Contenido del comentario
           example: Excelente post
         postId:
           type: integer
-          description: ID del post a comentar
           example: 1
         userId:
           type: integer
-          description: ID del usuario que comenta
           example: 1
 
     CommentUpdate:
@@ -1053,7 +1018,6 @@ components:
         text:
           type: string
           minLength: 1
-          description: Nuevo contenido del comentario
           example: Comentario actualizado
 
     Tag:
@@ -1061,18 +1025,18 @@ components:
       properties:
         id:
           type: integer
-          description: ID único de la etiqueta
         name:
           type: string
-          description: Nombre de la etiqueta
-        createdAt:
-          type: string
-          format: date-time
-          description: Fecha de creación
-        updatedAt:
-          type: string
-          format: date-time
-          description: Fecha de última actualización
+
+    TagWithPosts:
+      allOf:
+        - $ref: '#/components/schemas/Tag'
+        - type: object
+          properties:
+            posts:
+              type: array
+              items:
+                $ref: '#/components/schemas/Post'
 
     TagCreate:
       type: object
@@ -1083,28 +1047,26 @@ components:
           type: string
           minLength: 1
           maxLength: 50
-          description: Nombre de la etiqueta
           example: javascript
-
-    Example:
-      type: object
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        description:
-          type: string
 
     Error:
       type: object
       properties:
         error:
           type: string
-          description: Mensaje de error
-        message:
-          type: string
-          description: Detalles adicionales del error
         campo:
           type: string
-          description: Campo que causó el error (para validaciones)
+          description: Campo que causó el conflicto (para 409)
+
+    ValidationError:
+      type: object
+      properties:
+        errores:
+          type: array
+          items:
+            type: object
+            properties:
+              atributo:
+                type: string
+              error:
+                type: string

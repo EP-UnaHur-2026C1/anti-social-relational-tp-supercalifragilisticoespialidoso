@@ -4,7 +4,6 @@ import YAML from 'yaml'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { router as exampleRoute } from './routes/example.route.js'
 import { router as usersRoute } from './routes/users.route.js'
 import { router as postsRoute } from './routes/posts.route.js'
 import { router as commentsRoute } from './routes/comments.route.js'
@@ -21,11 +20,10 @@ app.use(express.json())
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
-app.use('/api', exampleRoute)
-app.use('/api', usersRoute)
-app.use('/api', postsRoute)
-app.use('/api', commentsRoute)
-app.use('/api', tagsRoute)
+app.use('/', usersRoute)
+app.use('/', postsRoute)
+app.use('/', commentsRoute)
+app.use('/', tagsRoute)
 
 app.use((err, req, res, next) => {
   if (err.name === 'SequelizeUniqueConstraintError') {
