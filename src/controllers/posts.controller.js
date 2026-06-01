@@ -68,7 +68,7 @@ export const addImage = async (req, res, next) => {
 export const removeImage = async (req, res, next) => {
   try {
     const image = await postsService.findImage(req.params.imageId, req.params.id)
-    if (!image) return res.status(404).json({ error: 'Imagen no encontrada' })
+    if (!image) return res.status(404).json({ error: 'Image not found' })
     await postsService.removeImage(image)
     res.status(204).send()
   } catch (err) {
@@ -81,7 +81,7 @@ export const removeImage = async (req, res, next) => {
 export const addTag = async (req, res, next) => {
   try {
     const tag = await tagsService.getByIdSimple(req.params.tagId)
-    if (!tag) return res.status(404).json({ error: 'Tag no encontrado' })
+    if (!tag) return res.status(404).json({ error: 'Tag not found' })
     await postsService.addTag(req.post, tag)
     res.status(201).send()
   } catch (err) {
@@ -92,7 +92,7 @@ export const addTag = async (req, res, next) => {
 export const removeTag = async (req, res, next) => {
   try {
     const tag = await tagsService.getByIdSimple(req.params.tagId)
-    if (!tag) return res.status(404).json({ error: 'Tag no encontrado' })
+    if (!tag) return res.status(404).json({ error: 'Tag not found' })
     await postsService.removeTag(req.post, tag)
     res.status(200).json(tag)
   } catch (err) {
