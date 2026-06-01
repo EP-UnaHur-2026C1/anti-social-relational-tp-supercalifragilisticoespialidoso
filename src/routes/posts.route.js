@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import * as postsController from '../controllers/posts.controller.js'
-import { schemaValidator } from '../middlewares/schemaValidator.js'
-import { validatePostId } from '../middlewares/post.middleware.js'
+import { schemaValidator } from '../middlewares/schemaValidator.middleware.js'
+import { validatePostId } from '../middlewares/validatePostId.middleware.js'
 import { postSchema, updatePostSchema } from '../schemas/post.schema.js'
 import { postImageSchema } from '../schemas/postImages.schema.js'
 
