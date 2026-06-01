@@ -2,6 +2,7 @@ import { Router } from 'express'
 import * as postsController from '../controllers/posts.controller.js'
 import { schemaValidator } from '../middlewares/schemaValidator.middleware.js'
 import { validatePostId } from '../middlewares/validatePostId.middleware.js'
+import { validateTagDelete } from '../middlewares/validateTagDelete.middleware.js'
 import { postSchema, updatePostSchema } from '../schemas/post.schema.js'
 import { postImageSchema } from '../schemas/postImages.schema.js'
 
@@ -31,6 +32,11 @@ router.delete(
 // PARA TAGS
 
 router.post('/posts/:id/tags', validatePostId, postsController.addTag)
-router.delete('/posts/:id/tags/:tagId', validatePostId, postsController.removeTag)
+router.delete(
+  '/posts/:id/tags/:tagId',
+  validatePostId,
+  validateTagDelete,
+  postsController.removeTag,
+)
 
 export { router }
