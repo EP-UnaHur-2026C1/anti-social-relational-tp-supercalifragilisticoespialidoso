@@ -1,29 +1,36 @@
 import { Router } from 'express'
 import * as postsController from '../controllers/posts.controller.js'
 import { schemaValidator } from '../middlewares/schemaValidator.js'
+import { validatePostId } from '../middlewares/post.middleware.js'
 import { postSchema, updatePostSchema } from '../schemas/post.schema.js'
 import { postImageSchema } from '../schemas/postImages.schema.js'
 
 const router = Router()
 
 router.get('/posts', postsController.getAll)
-router.get('/posts/:id', postsController.getById)
+router.get('/posts/:id', validatePostId, postsController.getById)
 router.post('/posts', schemaValidator(postSchema), postsController.create)
-router.put('/posts/:id', schemaValidator(updatePostSchema), postsController.update)
-router.delete('/posts/:id', postsController.remove)
+router.put('/posts/:id', validatePostId, schemaValidator(updatePostSchema), postsController.update)
+router.delete('/posts/:id', validatePostId, postsController.remove)
 
 // POST_IMAGES
 
-router.post('/posts/:id/images', schemaValidator(postImageSchema), postsController.addImage)
+router.post(
+  '/posts/:id/images',
+  validatePostId,
+  schemaValidator(postImageSchema),
+  postsController.addImage,
+)
 router.delete(
   '/posts/:id/images/:imageId',
+  validatePostId,
   schemaValidator(postImageSchema),
   postsController.removeImage,
 )
 
 // PARA TAGS
 
-router.post('/posts/:id/tags', postsController.addTag)
-router.delete('/posts/:id/tags/:tagId', postsController.removeTag)
+router.post('/posts/:id/tags', validatePostId, postsController.addTag)
+router.delete('/posts/:id/tags/:tagId', validatePostId, postsController.removeTag)
 
 export { router }
