@@ -4,7 +4,7 @@ import { defineConfig, globalIgnores } from 'eslint/config'
 import preferArrow from 'eslint-plugin-prefer-arrow-functions'
 
 export default defineConfig([
-  globalIgnores(['node_modules', 'eslint.config.js']),
+  globalIgnores(['node_modules', 'eslint.config.js', 'vitest.config.js']),
   {
     files: ['**/*.js'],
     extends: [js.configs.recommended],

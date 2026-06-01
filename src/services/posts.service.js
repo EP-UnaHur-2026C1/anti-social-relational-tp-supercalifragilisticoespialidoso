@@ -7,9 +7,9 @@ export const getById = (id, commentCutoff) =>
 
 export const create = (data) => postsRepo.create(data)
 
-export const update = (id, data) => postsRepo.update(id, data)
+export const update = (post, data) => postsRepo.update(post, data)
 
-export const remove = (id) => postsRepo.remove(id)
+export const remove = (post) => postsRepo.remove(post)
 
 export const findImage = (id, postId) => postsRepo.findImage(id, postId)
 export const addImage = (postId, url) => postsRepo.addImage(postId, url)
